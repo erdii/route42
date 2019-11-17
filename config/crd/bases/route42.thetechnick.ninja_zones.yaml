@@ -1,0 +1,91 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.2
+  creationTimestamp: null
+  name: zones.route42.thetechnick.ninja
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .zone.master
+    name: Master
+    type: string
+  - JSONPath: .zone.admin
+    name: Admin
+    type: string
+  - JSONPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+  group: route42.thetechnick.ninja
+  names:
+    kind: Zone
+    listKind: ZoneList
+    plural: zones
+    singular: zone
+  scope: ""
+  subresources: {}
+  validation:
+    openAPIV3Schema:
+      description: Zone is the Schema for the zones API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        zone:
+          description: ZoneConfig holds Zone configuration settings.
+          properties:
+            soa:
+              description: start of authority record
+              properties:
+                admin:
+                  type: string
+                expire:
+                  type: string
+                master:
+                  type: string
+                negativeTTL:
+                  type: string
+                refresh:
+                  type: string
+                retry:
+                  type: string
+                serial:
+                  type: integer
+                ttl:
+                  type: string
+              required:
+              - admin
+              - expire
+              - master
+              - negativeTTL
+              - refresh
+              - retry
+              - serial
+              - ttl
+              type: object
+          required:
+          - soa
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

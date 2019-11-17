@@ -1,0 +1,14 @@
+apiVersion: route42.thetechnick.ninja/v1alpha1
+kind: RecordSet
+metadata:
+  name: record-set-0001
+record:
+  dnsName: test.thetechnick.ninja
+  ttl: 15m
+  a:
+  - '192.168.178.3'
+  # aaaa:
+  # - 2a01:4f8:c2c:7235::1
+  # txt:
+  # - text
+  # cname: 'google.de'

@@ -1,0 +1,88 @@
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: mutating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-route42-thetechnick-ninja-v1alpha1-recordset
+  failurePolicy: Fail
+  name: mutation-recordset.route42.thetechnick.ninja
+  rules:
+  - apiGroups:
+    - route42.thetechnick.ninja
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - recordsets
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /mutate-route42-thetechnick-ninja-v1alpha1-zone
+  failurePolicy: Fail
+  name: mutation-zone.route42.thetechnick.ninja
+  rules:
+  - apiGroups:
+    - route42.thetechnick.ninja
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - zones
+
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: validating-webhook-configuration
+webhooks:
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-route42-thetechnick-ninja-v1alpha1-recordset
+  failurePolicy: Fail
+  name: validation-recordset.route42.thetechnick.ninja
+  rules:
+  - apiGroups:
+    - route42.thetechnick.ninja
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - recordsets
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: webhook-service
+      namespace: system
+      path: /validate-route42-thetechnick-ninja-v1alpha1-zone
+  failurePolicy: Fail
+  name: validation-zone.route42.thetechnick.ninja
+  rules:
+  - apiGroups:
+    - route42.thetechnick.ninja
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - zones

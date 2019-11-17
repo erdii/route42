@@ -1,0 +1,10 @@
+version: "2"
+domain: route42.thetechnick.ninja
+repo: github.com/thetechnick/route42
+resources:
+- group: ''
+  version: v1alpha1
+  kind: RecordSet
+- group: ''
+  version: v1alpha1
+  kind: Zone

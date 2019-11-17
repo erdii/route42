@@ -1,0 +1,130 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.2
+  creationTimestamp: null
+  name: recordsets.route42.thetechnick.ninja
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .record.dnsName
+    name: DNS Name
+    type: string
+  - JSONPath: .record.type
+    name: Type
+    type: string
+  - JSONPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+  group: route42.thetechnick.ninja
+  names:
+    kind: RecordSet
+    listKind: RecordSetList
+    plural: recordsets
+    singular: recordset
+  scope: ""
+  subresources: {}
+  validation:
+    openAPIV3Schema:
+      description: RecordSet is the Schema for the recordsets API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        record:
+          description: Record holds the settings for this RecordSet.
+          properties:
+            a:
+              description: A record, list of IPv4 addresses.
+              items:
+                type: string
+              type: array
+            aaaa:
+              description: AAAA record, list of IPv6 addresses.
+              items:
+                type: string
+              type: array
+            cname:
+              description: CNAME record, Canonical Name of DNSName.
+              type: string
+            dnsName:
+              description: DNS_NAME that this record belongs to. must be fully qualified.
+                must belong to a existing Zone object.
+              type: string
+            mx:
+              description: MX record, list of MX records.
+              items:
+                description: MX mail server record.
+                properties:
+                  host:
+                    type: string
+                  priority:
+                    type: integer
+                required:
+                - host
+                - priority
+                type: object
+              type: array
+            ns:
+              description: NS record, list of domain names.
+              items:
+                type: string
+              type: array
+            srv:
+              description: SRV record, list of SRV records.
+              items:
+                description: SRV record.
+                properties:
+                  host:
+                    type: string
+                  port:
+                    type: integer
+                  priority:
+                    type: integer
+                  weight:
+                    type: integer
+                required:
+                - host
+                - port
+                - priority
+                - weight
+                type: object
+              type: array
+            ttl:
+              description: TTL of the DNS entry.
+              type: string
+            txt:
+              description: TXT record, list of strings.
+              items:
+                type: string
+              type: array
+            type:
+              description: Type of the RecordSet.
+              type: string
+          required:
+          - dnsName
+          - ttl
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
