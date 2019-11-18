@@ -9,8 +9,10 @@ namespace: route42-system
 namePrefix: route42-
 
 # Labels to add to all resources and selectors.
-#commonLabels:
-#  someName: someValue
+commonLabels:
+  app.kubernetes.io/name: route42-manager
+  app.kubernetes.io/component: controller-manager
+  app.kubernetes.io/part-of: route42
 
 bases:
 - ../crd

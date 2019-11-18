@@ -1,8 +1,8 @@
-resources:
-- manager.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+resources:
+- manager.yaml
 images:
 - name: controller
-  newName: quay.io/thetechnick/route42
-  newTag: v1
+  newName: quay.io/nschieder/route42
+  newTag: v0.1.0

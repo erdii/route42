@@ -22,8 +22,8 @@ import (
 
 // Zone is the Schema for the zones API
 // +kubebuilder:object:root=true
-// +kubebuilder:printcolumn:name="Master",type="string",JSONPath=".zone.master"
-// +kubebuilder:printcolumn:name="Admin",type="string",JSONPath=".zone.admin"
+// +kubebuilder:printcolumn:name="Master",type="string",JSONPath=".zone.soa.master"
+// +kubebuilder:printcolumn:name="Admin",type="string",JSONPath=".zone.soa.admin"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 type Zone struct {
 	metav1.TypeMeta   `json:",inline"`

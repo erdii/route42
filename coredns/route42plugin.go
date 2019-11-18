@@ -75,7 +75,7 @@ func (p *route42plugin) ServeDNS(
 	qname := state.Name()
 
 	log := p.log.WithValues("qname", qname, "qtype", state.Type())
-	log.Info("serving")
+	log.V(1).Info("serving")
 
 	p.zones.RLock()
 	defer p.zones.RUnlock()

@@ -9,10 +9,10 @@ metadata:
   name: zones.route42.thetechnick.ninja
 spec:
   additionalPrinterColumns:
-  - JSONPath: .zone.master
+  - JSONPath: .zone.soa.master
     name: Master
     type: string
-  - JSONPath: .zone.admin
+  - JSONPath: .zone.soa.admin
     name: Admin
     type: string
   - JSONPath: .metadata.creationTimestamp

@@ -125,7 +125,7 @@ func (r *ZoneReconciler) Reconcile(req ctrl.Request) (result ctrl.Result, err er
 
 func (r *ZoneReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		Watches(&source.Kind{Type: &route42v1alpha1.Zone{}}, &handler.EnqueueRequestForObject{}).
+		For(&route42v1alpha1.Zone{}).
 		Watches(&source.Kind{Type: &route42v1alpha1.RecordSet{}}, &handler.EnqueueRequestForObject{}).
 		Complete(r)
 }

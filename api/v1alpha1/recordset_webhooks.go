@@ -17,6 +17,8 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"net"
+
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -47,14 +49,13 @@ func (r *RecordSet) Default() {
 func (r *RecordSet) ValidateCreate() error {
 	recordSetlog.Info("validate create", "Zone",
 		types.NamespacedName{Name: r.Name, Namespace: r.Namespace})
-	return nil
+	return r.validate(nil)
 }
 
 func (r *RecordSet) ValidateUpdate(old runtime.Object) error {
 	recordSetlog.Info("validate update", "Zone",
 		types.NamespacedName{Name: r.Name, Namespace: r.Namespace})
-
-	return nil
+	return r.validate(old.(*RecordSet))
 }
 
 func (r *RecordSet) ValidateDelete() error {
@@ -63,7 +64,7 @@ func (r *RecordSet) ValidateDelete() error {
 	return nil
 }
 
-func (r *RecordSet) validate(old *Zone) error {
+func (r *RecordSet) validate(old *RecordSet) error {
 	var allErrs field.ErrorList
 
 	if err := validateName(
@@ -80,6 +81,7 @@ func (r *RecordSet) validate(old *Zone) error {
 	switch r.Record.Type {
 	case RecordTypeA:
 		allErrs = append(allErrs, filterNil(
+			validateA(r.Record.A),
 			noAAAA(r.Record.AAAA),
 			noTXT(r.Record.TXT),
 			noCName(r.Record.CName),
@@ -90,6 +92,7 @@ func (r *RecordSet) validate(old *Zone) error {
 
 	case RecordTypeAAAA:
 		allErrs = append(allErrs, filterNil(
+			validateAAAA(r.Record.AAAA),
 			noA(r.Record.A),
 			noTXT(r.Record.TXT),
 			noCName(r.Record.CName),
@@ -100,6 +103,7 @@ func (r *RecordSet) validate(old *Zone) error {
 
 	case RecordTypeTXT:
 		allErrs = append(allErrs, filterNil(
+			nil,
 			noA(r.Record.A),
 			noAAAA(r.Record.AAAA),
 			noCName(r.Record.CName),
@@ -110,6 +114,7 @@ func (r *RecordSet) validate(old *Zone) error {
 
 	case RecordTypeCName:
 		allErrs = append(allErrs, filterNil(
+			nil,
 			noA(r.Record.A),
 			noAAAA(r.Record.AAAA),
 			noTXT(r.Record.TXT),
@@ -120,6 +125,7 @@ func (r *RecordSet) validate(old *Zone) error {
 
 	case RecordTypeNS:
 		allErrs = append(allErrs, filterNil(
+			nil,
 			noA(r.Record.A),
 			noAAAA(r.Record.AAAA),
 			noTXT(r.Record.TXT),
@@ -130,6 +136,7 @@ func (r *RecordSet) validate(old *Zone) error {
 
 	case RecordTypeMX:
 		allErrs = append(allErrs, filterNil(
+			nil,
 			noA(r.Record.A),
 			noAAAA(r.Record.AAAA),
 			noTXT(r.Record.TXT),
@@ -140,6 +147,7 @@ func (r *RecordSet) validate(old *Zone) error {
 
 	case RecordTypeSRV:
 		allErrs = append(allErrs, filterNil(
+			nil,
 			noA(r.Record.A),
 			noAAAA(r.Record.AAAA),
 			noTXT(r.Record.TXT),
@@ -158,8 +166,7 @@ func (r *RecordSet) validate(old *Zone) error {
 		r.Name, allErrs)
 }
 
-func filterNil(errs ...*field.Error) []*field.Error {
-	var fields []*field.Error
+func filterNil(fields []*field.Error, errs ...*field.Error) []*field.Error {
 	for _, err := range errs {
 		if err == nil {
 			continue
@@ -177,12 +184,38 @@ func noA(a []string) *field.Error {
 	return field.Invalid(path, a, "can not contain multiple types of records")
 }
 
+func validateA(a []string) []*field.Error {
+	var errs []*field.Error
+	for i, entry := range a {
+		path := field.NewPath("record").Child("a").Index(i)
+
+		ip := net.ParseIP(entry)
+		if ip == nil || ip.To4() == nil {
+			errs = append(errs, field.Invalid(path, entry, "not a valid IPv4 address"))
+		}
+	}
+	return errs
+}
+
 func noAAAA(aaaa []string) *field.Error {
 	if len(aaaa) == 0 {
 		return nil
 	}
 	path := field.NewPath("record").Child("aaaa")
 	return field.Invalid(path, aaaa, "can not contain multiple types of records")
+}
+
+func validateAAAA(a []string) []*field.Error {
+	var errs []*field.Error
+	for i, entry := range a {
+		path := field.NewPath("record").Child("aaaa").Index(i)
+
+		ip := net.ParseIP(entry)
+		if ip == nil || ip.To16() == nil {
+			errs = append(errs, field.Invalid(path, entry, "not a valid IPv6 address"))
+		}
+	}
+	return errs
 }
 
 func noTXT(txt []string) *field.Error {
